@@ -1,0 +1,171 @@
+// Version: 1.0.0
+type ActivityEntry__647874394 =
+  {
+    activityType : ActivityType__888527944;
+    content : Text;
+    createdAt : Timestamp__301639476;
+    createdBy : UserId__158757552;
+    id : ActivityId__326478791;
+    leadId : LeadId__1073473045
+  };
+type ActivityId__326478791 = Nat;
+type ActivityType__888527944 =
+  {
+    #AiSummary;
+    #Called;
+    #DocumentUploaded;
+    #EmailSent;
+    #LeadCreated;
+    #LeadUpdated;
+    #NoteAdded;
+    #StatusChange;
+    #TaskCompleted;
+    #TaskCreated;
+    #WhatsappSent
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DocumentId__446996092 = Nat;
+type Document__57377506 =
+  {
+    fileSize : Nat;
+    fileType : Text;
+    filename : Text;
+    id : DocumentId__446996092;
+    leadId : LeadId__1073473045;
+    storageUrl : Text;
+    uploadedAt : Timestamp__301639476;
+    uploadedBy : UserId__158757552
+  };
+type FollowUpTask__973017725 =
+  {
+    assignedTo : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    createdBy : UserId__158757552;
+    dueDate : Timestamp__301639476;
+    id : TaskId__207642484;
+    leadId : LeadId__1073473045;
+    var nextRunDate : ?Timestamp__301639476;
+    recurring : RecurringType__525888237;
+    var taskStatus : TaskStatus__843367325;
+    taskType : TaskType__194162907;
+    title : Text
+  };
+type Int__270357528 = Int__616954475;
+type Int__616954475 = Int;
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type LeadId__1073473045 = Nat;
+type LeadSource__829062046 =
+  {
+    #ApiIntegration;
+    #CsvUpload;
+    #FacebookAds;
+    #GoogleAds;
+    #LandingPage;
+    #ManualEntry;
+    #Other : Text;
+    #Referral;
+    #Website
+  };
+type LeadStatus__653971529 =
+  {
+    #Contacted;
+    #FollowUpScheduled;
+    #Interested;
+    #Lost;
+    #NewLead;
+    #NotInterested;
+    #ProposalSent;
+    #Qualified;
+    #Won
+  };
+type Lead__531162083 =
+  {
+    var assignedUserId : ?UserId__158757552;
+    campaign : Text;
+    courseInterest : Text;
+    createdAt : Timestamp__301639476;
+    var dealValue : Nat;
+    email : Text;
+    id : LeadId__1073473045;
+    name : Text;
+    var notes : Text;
+    phone : Text;
+    source : LeadSource__829062046;
+    var status : LeadStatus__653971529;
+    var statusHistory : [StatusHistoryEntry__681685951];
+    var tags : [Text];
+    var updatedAt : Timestamp__301639476
+  };
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type RecurringType__525888237 = {#Daily; #Monthly; #None; #Weekly};
+type Role__717780527 = {#Admin; #Counselor; #SalesManager; #Telecaller};
+type StatusHistoryEntry__681685951 =
+  {
+    changedAt : Timestamp__301639476;
+    changedBy : UserId__158757552;
+    status : LeadStatus__653971529
+  };
+type TaskId__207642484 = Nat;
+type TaskStatus__843367325 = {#Completed; #Overdue; #Pending};
+type TaskType__194162907 = {#Call; #Email; #Meeting; #Sms; #Whatsapp};
+type Time__796480547 = Int__270357528;
+type Time__900049286 = Time__796480547;
+type Timestamp__301639476 = Time__900049286;
+type UserId__158757552 = Principal;
+type UserProfile__277265826 =
+  {
+    var aiApiKey : Text;
+    avatar : Text;
+    createdAt : Timestamp__301639476;
+    email : Text;
+    id : UserId__158757552;
+    name : Text;
+    role : Role__717780527
+  };
+actor {
+  stable activities :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ActivityEntry__647874394]];
+      var elementIndex : Nat__490723111
+    };
+  stable documents :
+    {
+      var root : Node__46230540<DocumentId__446996092, Document__57377506>;
+      var size : Nat__490723111
+    };
+  stable leads :
+    {
+      var root : Node__46230540<LeadId__1073473045, Lead__531162083>;
+      var size : Nat__490723111
+    };
+  stable state :
+    {
+      var nextActivityId : Nat;
+      var nextDocumentId : Nat;
+      var nextLeadId : Nat;
+      var nextTaskId : Nat
+    };
+  stable tasks :
+    {
+      var root : Node__46230540<TaskId__207642484, FollowUpTask__973017725>;
+      var size : Nat__490723111
+    };
+  stable users :
+    {
+      var root : Node__46230540<UserId__158757552, UserProfile__277265826>;
+      var size : Nat__490723111
+    };
+  stable usersState :
+    {users : Map__605269027<UserId__158757552, UserProfile__277265826>}
+};

@@ -1,0 +1,28 @@
+{
+  "overview": "An AI-powered CRM for sales teams to capture, track, and convert leads. Features role-based access, Kanban pipeline, AI lead scoring, follow-up management, and dashboards — all in a clean, professional interface.",
+  "features": [
+    "Role-based access control (Admin, Sales Manager, Counselor, Telecaller)",
+    "Lead management with full schema: name, phone, email, course interest, source, campaign, status, notes, tags",
+    "Kanban board with drag-and-drop stage changes and timestamp tracking",
+    "Table view with smart filters and search",
+    "AI assistant: lead scoring, next action recommendations, message generation, note summarization",
+    "Follow-up task management with overdue alerts and recurring tasks",
+    "Dashboard with KPI cards, source charts, conversion funnel, and team productivity",
+    "Document management for proposals and certificates",
+    "Chronological activity timeline on each lead",
+    "Light and dark mode",
+    "Mobile responsive design"
+  ],
+  "category": "productivity",
+  "tags": [
+    "crm",
+    "leads",
+    "sales",
+    "ai",
+    "kanban",
+    "dashboard",
+    "follow-up",
+    "role-based-access"
+  ],
+  "last_updated": "2026-05-12T09:15:08.267Z"
+}

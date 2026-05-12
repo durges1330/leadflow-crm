@@ -1,0 +1,250 @@
+type UserProfilePublic = 
+ record {
+   avatar: text;
+   createdAt: Timestamp;
+   email: text;
+   id: UserId;
+   name: text;
+   role: Role;
+ };
+type UserId = principal;
+type Timestamp = int;
+type TaskType = 
+ variant {
+   Call;
+   Email;
+   Meeting;
+   Sms;
+   Whatsapp;
+ };
+type TaskStatus = 
+ variant {
+   Completed;
+   Overdue;
+   Pending;
+ };
+type TaskId = nat;
+type StatusHistoryEntry = 
+ record {
+   changedAt: Timestamp;
+   changedBy: UserId;
+   status: LeadStatus;
+ };
+type Role = 
+ variant {
+   Admin;
+   Counselor;
+   SalesManager;
+   Telecaller;
+ };
+type RecurringType = 
+ variant {
+   Daily;
+   Monthly;
+   None;
+   Weekly;
+ };
+type LeadStatus = 
+ variant {
+   Contacted;
+   FollowUpScheduled;
+   Interested;
+   Lost;
+   NewLead;
+   NotInterested;
+   ProposalSent;
+   Qualified;
+   Won;
+ };
+type LeadStats = 
+ record {
+   bySource: vec record {
+                   LeadSource;
+                   nat;
+                 };
+   byStatus: vec record {
+                   LeadStatus;
+                   nat;
+                 };
+   conversionRate: nat;
+   totalDealValue: nat;
+   totalLeads: nat;
+   wonLeads: nat;
+ };
+type LeadSource = 
+ variant {
+   ApiIntegration;
+   CsvUpload;
+   FacebookAds;
+   GoogleAds;
+   LandingPage;
+   ManualEntry;
+   Other: text;
+   Referral;
+   Website;
+ };
+type LeadPublic = 
+ record {
+   assignedUserId: opt UserId;
+   campaign: text;
+   courseInterest: text;
+   createdAt: Timestamp;
+   dealValue: nat;
+   email: text;
+   id: LeadId;
+   name: text;
+   notes: text;
+   phone: text;
+   source: LeadSource;
+   status: LeadStatus;
+   statusHistory: vec StatusHistoryEntry;
+   tags: vec text;
+   updatedAt: Timestamp;
+ };
+type LeadId = nat;
+type LeadFilter = 
+ record {
+   assignedUserId: opt UserId;
+   campaign: opt text;
+   fromDate: opt Timestamp;
+   source: opt LeadSource;
+   status: opt LeadStatus;
+   tag: opt text;
+   toDate: opt Timestamp;
+ };
+type FunnelStage = 
+ record {
+   count: nat;
+   status: LeadStatus;
+ };
+type FollowUpTaskPublic = 
+ record {
+   assignedTo: UserId;
+   createdAt: Timestamp;
+   createdBy: UserId;
+   dueDate: Timestamp;
+   id: TaskId;
+   leadId: LeadId;
+   nextRunDate: opt Timestamp;
+   recurring: RecurringType;
+   taskStatus: TaskStatus;
+   taskType: TaskType;
+   title: text;
+ };
+type DocumentId = nat;
+type Document = 
+ record {
+   fileSize: nat;
+   fileType: text;
+   filename: text;
+   id: DocumentId;
+   leadId: LeadId;
+   storageUrl: text;
+   uploadedAt: Timestamp;
+   uploadedBy: UserId;
+ };
+type CreateTaskInput = 
+ record {
+   assignedTo: UserId;
+   dueDate: Timestamp;
+   leadId: LeadId;
+   recurring: RecurringType;
+   taskType: TaskType;
+   title: text;
+ };
+type CreateLeadInput = 
+ record {
+   assignedUserId: opt UserId;
+   campaign: text;
+   courseInterest: text;
+   dealValue: nat;
+   email: text;
+   name: text;
+   notes: text;
+   phone: text;
+   source: LeadSource;
+   tags: vec text;
+ };
+type CounselorStats = 
+ record {
+   totalAssigned: nat;
+   totalConverted: nat;
+   totalFollowedUp: nat;
+   userId: UserId;
+ };
+type ActivityType = 
+ variant {
+   AiSummary;
+   Called;
+   DocumentUploaded;
+   EmailSent;
+   LeadCreated;
+   LeadUpdated;
+   NoteAdded;
+   StatusChange;
+   TaskCompleted;
+   TaskCreated;
+   WhatsappSent;
+ };
+type ActivityId = nat;
+type ActivityEntry = 
+ record {
+   activityType: ActivityType;
+   content: text;
+   createdAt: Timestamp;
+   createdBy: UserId;
+   id: ActivityId;
+   leadId: LeadId;
+ };
+service : {
+  addDocument: (leadId: LeadId, filename: text, storageUrl: text, fileType:
+   text, fileSize: nat) -> (Document);
+  assignLead: (id: LeadId, assignedUserId: opt UserId) -> (LeadPublic);
+  completeFollowUpTask: (id: TaskId) -> (FollowUpTaskPublic);
+  createFollowUpTask: (input: CreateTaskInput) -> (FollowUpTaskPublic);
+  createLead: (input: CreateLeadInput) -> (LeadPublic);
+  deleteDocument: (id: DocumentId) -> (bool);
+  deleteFollowUpTask: (id: TaskId) -> (bool);
+  deleteLead: (id: LeadId) -> (bool);
+  filterLeads: (filter: LeadFilter) -> (vec LeadPublic) query;
+  generateSampleData: () -> (nat);
+  getConversionFunnel: () -> (vec FunnelStage) query;
+  getCounselorStats: () -> (vec CounselorStats) query;
+  getDashboardStats: () -> (LeadStats) query;
+  getDocumentsByLead: (leadId: LeadId) -> (vec Document) query;
+  getFollowUpTask: (id: TaskId) -> (opt FollowUpTaskPublic) query;
+  getLead: (id: LeadId) -> (opt LeadPublic) query;
+  getLeadTimeline: (leadId: LeadId) -> (vec ActivityEntry) query;
+  getLeadsBySourceCounts: () -> (vec record {
+                                       LeadSource;
+                                       nat;
+                                     }) query;
+  getLeadsByStatus: (status: LeadStatus) -> (vec LeadPublic) query;
+  getLeadsByStatusCounts: () -> (vec record {
+                                       LeadStatus;
+                                       nat;
+                                     }) query;
+  getLeadsCreatedInPeriod: (fromDate: Timestamp, toDate: Timestamp) ->
+   (nat) query;
+  getMyActivities: () -> (vec ActivityEntry) query;
+  getMyLeads: () -> (vec LeadPublic) query;
+  getMyProfile: () -> (opt UserProfilePublic);
+  getMyTasks: () -> (vec FollowUpTaskPublic) query;
+  getOverdueTasks: () -> (vec FollowUpTaskPublic) query;
+  getRecentActivities: (limit: nat) -> (vec ActivityEntry) query;
+  getTasksByLead: (leadId: LeadId) -> (vec FollowUpTaskPublic) query;
+  getTotalLeads: () -> (nat) query;
+  importLeads: (inputs: vec CreateLeadInput) -> (nat);
+  listAllUsers: () -> (vec UserProfilePublic) query;
+  listLeads: () -> (vec LeadPublic) query;
+  registerProfile: (name: text, email: text, role: Role, avatar: text) ->
+   (UserProfilePublic);
+  setMyAiApiKey: (apiKey: text) -> ();
+  setUserRole: (targetUser: UserId, role: Role) -> (UserProfilePublic);
+  updateLead: (id: LeadId, input: CreateLeadInput) -> (LeadPublic);
+  updateLeadNotes: (id: LeadId, notes: text) -> (LeadPublic);
+  updateLeadStatus: (id: LeadId, newStatus: LeadStatus) -> (LeadPublic);
+  updateLeadTags: (id: LeadId, tags: vec text) -> (LeadPublic);
+  updateMyProfile: (name: text, email: text, avatar: text) ->
+   (UserProfilePublic);
+}
